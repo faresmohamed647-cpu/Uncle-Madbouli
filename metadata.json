@@ -1,0 +1,6 @@
+{
+  "name": "Feteer House — بيت الفطير",
+  "description": "Authentic Egyptian Feteer online ordering website with customizable sweet & savory feteer, traditional meshaltet, stone-baked pizza, and cash-on-delivery checkout.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
