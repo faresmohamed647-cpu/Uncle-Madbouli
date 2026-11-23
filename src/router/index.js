@@ -7,7 +7,7 @@ const router = createRouter({
     return { top: 0, behavior: 'smooth' };
   },
   routes: [
-    { path: '/', name: 'home', component: () => import('../views/HomeView.vue'), meta: { title: 'Amo Madbouly | Feteer House' } },
+    { path: '/', name: 'home', component: () => import('../views/HomeView.vue'), meta: { title: 'عم مدبولي | فطير مصري أصيل' } },
     { path: '/menu', name: 'menu', component: () => import('../views/MenuView.vue'), meta: { title: 'Menu | Amo Madbouly' } },
     { path: '/product', name: 'product', component: () => import('../views/ProductView.vue'), meta: { title: 'Product | Amo Madbouly' } },
     { path: '/cart', name: 'cart', component: () => import('../views/CartView.vue'), meta: { title: 'Cart | Amo Madbouly' } },

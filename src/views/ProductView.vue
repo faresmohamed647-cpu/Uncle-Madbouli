@@ -40,7 +40,7 @@ function renderProductDetailsPage() {
     }
   }
 
-  document.title = `${t(product.name, lang)} — Feteer House`;
+  document.title = `${t(product.name, lang)} — عم مدبولي`;
 
   root.innerHTML = `
     <section class="section" style="padding-top: 28px;">

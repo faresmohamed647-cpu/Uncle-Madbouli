@@ -1,6 +1,6 @@
 {
-  "name": "Feteer House — بيت الفطير",
-  "description": "Authentic Egyptian Feteer online ordering website with customizable sweet & savory feteer, traditional meshaltet, stone-baked pizza, and cash-on-delivery checkout.",
+  "name": "عم مدبولي | فطير مصري أصيل",
+  "description": "موقع عم مدبولي لعرض وطلب الفطير المصري الأصيل والمخبوزات الطازجة.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
