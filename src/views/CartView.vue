@@ -1,7 +1,10 @@
-import { ADDONS, BRAND_CONFIG, PRODUCTS, UI_TEXT } from '../data.js';
-import { getCartTotals, removeFromCart, updateQuantity } from '../cart.js';
-import { formatPrice, getLang, t } from '../i18n.js';
-import { escapeHtml, initAppShell, renderImageWithFallback } from '../ui.js';
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue';
+import { usePageLocale } from '../composables/usePageLocale.js';
+import { ADDONS, BRAND_CONFIG, PRODUCTS, UI_TEXT } from '../js/data.js';
+import { getCartTotals, removeFromCart, updateQuantity } from '../js/cart.js';
+import { formatPrice, getLang, t } from '../js/i18n.js';
+import { escapeHtml, renderImageWithFallback } from '../js/ui.js';
 
 function renderCartPage() {
   const lang = getLang();
@@ -24,7 +27,7 @@ function renderCartPage() {
             <div class="empty-state__icon"><i class="fa-solid fa-bag-shopping"></i></div>
             <h2>${escapeHtml(t(UI_TEXT.cart.emptyTitle, lang))}</h2>
             <p style="color: var(--color-text-muted); margin-bottom: 20px;">${escapeHtml(t(UI_TEXT.cart.emptyDesc, lang))}</p>
-            <a href="/menu.html" class="btn btn--primary btn--lg">${escapeHtml(t(UI_TEXT.cart.browseMenu, lang))}</a>
+            <a href="/menu" class="btn btn--primary btn--lg">${escapeHtml(t(UI_TEXT.cart.browseMenu, lang))}</a>
           </div>
         </div>
       </section>
@@ -71,7 +74,7 @@ function renderCartPage() {
                       <div class="cart-item__top">
                         <div>
                           <h3 class="cart-item__title">
-                            <a href="/product.html?id=${product.id}">${escapeHtml(t(product.name, lang))}</a>
+                            <a href="/product?id=${product.id}">${escapeHtml(t(product.name, lang))}</a>
                           </h3>
                           ${detailsParts.length ? `<div class="cart-item__meta">${escapeHtml(detailsParts.join(' · '))}</div>` : ''}
                           ${item.instructions ? `<div class="cart-item__meta" style="margin-top: 2px;">“${escapeHtml(item.instructions)}”</div>` : ''}
@@ -123,10 +126,10 @@ function renderCartPage() {
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 10px;">
-            <a href="/checkout.html" class="btn btn--primary btn--lg btn--full">
+            <a href="/checkout" class="btn btn--primary btn--lg btn--full">
               ${escapeHtml(t(UI_TEXT.cart.proceedCheckout, lang))}
             </a>
-            <a href="/menu.html" class="btn btn--outline btn--full">
+            <a href="/menu" class="btn btn--outline btn--full">
               ${escapeHtml(t(UI_TEXT.cart.continueShopping, lang))}
             </a>
           </div>
@@ -157,5 +160,17 @@ function renderCartPage() {
   });
 }
 
-initAppShell('cart', renderCartPage);
-renderCartPage();
+function mountPage() {
+  renderCartPage();
+}
+
+function unmountPage() {}
+
+usePageLocale(renderCartPage);
+onMounted(mountPage);
+onBeforeUnmount(unmountPage);
+</script>
+
+<template>
+  <main id="cart-root"></main>
+</template>

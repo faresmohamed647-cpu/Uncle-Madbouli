@@ -12,7 +12,7 @@ A bilingual (Arabic RTL / English LTR) online ordering platform for a traditiona
 - **Default Language & Layout Direction**: Bilingual storefront defaulting to **Arabic (RTL)** with an instant **English (LTR)** toggle persisted across pages, ensuring seamless readability for both Arabic and English visitors.
 - **Temporary Brand Identity**: Uses **"بيت الفطير · Feteer House"** stored in a single central configuration module so the final restaurant name, contact details, and logo can be swapped in one place later.
 - **Currency & Delivery Areas**: Prices in **Egyptian Pounds (EGP / ج.م)** with Cairo and Giza delivery districts (Zamalek, Maadi, Nasr City, Dokki, Mohandessin, New Cairo, Heliopolis, 6th of October) and a clear free-delivery threshold.
-- **Pure Vanilla Multi-Page Architecture**: Built with standard HTML5, CSS3, and ES Module Vanilla JavaScript (zero frontend frameworks like React or Vue), served cleanly as a multi-page application through the project bundler.
+- **Vue 3 Multi-Page Architecture**: Uses Vue 3 Composition API route views, Vue Router, and Pinia within the existing Vite multi-page build, while preserving the storefront design and business behavior.
 
 ---
 

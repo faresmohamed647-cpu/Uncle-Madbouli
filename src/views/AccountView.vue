@@ -1,4 +1,7 @@
-import { DELIVERY_DISTRICTS, UI_TEXT } from '../data.js';
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue';
+import { usePageLocale } from '../composables/usePageLocale.js';
+import { DELIVERY_DISTRICTS, UI_TEXT } from '../js/data.js';
 import {
   deleteAddress,
   deletePhone,
@@ -13,9 +16,9 @@ import {
   subscribeOrderUpdates,
   upsertAddress,
   upsertPhone,
-} from '../cart.js';
-import { formatPrice, getLang, t } from '../i18n.js';
-import { bind3DTilt, escapeHtml, initAppShell } from '../ui.js';
+} from '../js/cart.js';
+import { formatPrice, getLang, t } from '../js/i18n.js';
+import { bind3DTilt, escapeHtml } from '../js/ui.js';
 
 let editingAddressId = null;
 
@@ -85,7 +88,7 @@ function renderAccountPage() {
                   ${escapeHtml(t(UI_TEXT.account.myOrdersSubtitle, lang))}
                 </p>
               </div>
-              <a href="/menu.html" class="btn btn--outline btn--sm">
+              <a href="/menu" class="btn btn--outline btn--sm">
                 ${escapeHtml(t(UI_TEXT.nav.orderNow, lang))}
               </a>
             </div>
@@ -123,7 +126,7 @@ function renderAccountPage() {
                           </div>
                         </div>
                         <div class="saved-item__actions">
-                          <a href="/track.html?order=${encodeURIComponent(ord.orderNumber)}" class="btn btn--outline btn--sm">
+                          <a href="/track?order=${encodeURIComponent(ord.orderNumber)}" class="btn btn--outline btn--sm">
                             ${escapeHtml(t(UI_TEXT.account.trackThisOrder, lang))}
                           </a>
                         </div>
@@ -387,7 +390,7 @@ function renderAccountPage() {
                 <div><strong class="tabular-nums" dir="ltr" style="color: var(--color-primary);">${escapeHtml(recentOrder.orderNumber)}</strong> · <span class="tabular-nums">${escapeHtml(formatPrice(recentOrder.total, lang))}</span></div>
                 <div style="margin-top: 4px;">${escapeHtml(t(UI_TEXT.track.progressLabel, lang))}: <strong class="tabular-nums">${recentOrder.trackingProgress ?? 12}%</strong></div>
               </div>
-              <a href="/track.html" class="btn btn--outline btn--full">
+              <a href="/track" class="btn btn--outline btn--full">
                 ${escapeHtml(t(UI_TEXT.account.trackRecentBtn, lang))}
               </a>
             </div>
@@ -508,8 +511,22 @@ function renderAccountPage() {
   });
 }
 
-initAppShell('account', renderAccountPage);
-renderAccountPage();
-subscribeOrderUpdates(() => {
+function mountPage() {
   renderAccountPage();
-});
+  unsubscribeOrderUpdates = subscribeOrderUpdates(() => renderAccountPage());
+}
+let unsubscribeOrderUpdates = null;
+
+function unmountPage() {
+  unsubscribeOrderUpdates?.();
+  unsubscribeOrderUpdates = null;
+}
+
+usePageLocale(renderAccountPage);
+onMounted(mountPage);
+onBeforeUnmount(unmountPage);
+</script>
+
+<template>
+  <main id="account-root"></main>
+</template>

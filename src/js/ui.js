@@ -1,16 +1,12 @@
 /**
- * Shared UI Components: Header, Mobile Drawer, Footer, Toast, Product Cards & Customization Modal
+ * Shared catalog UI utilities: toasts, product cards, and customization modal.
  */
-import { ADDONS, BRAND_CONFIG, CATEGORIES, PRODUCTS, UI_TEXT } from './data.js';
-import { addToCart, calculateUnitPrice, getCartCount, getCustomerProfile } from './cart.js';
-import { applyDocumentDirection, formatPrice, getLang, t, toggleLang } from './i18n.js';
+import { ADDONS, CATEGORIES, PRODUCTS, UI_TEXT } from './data.js';
+import { addToCart, calculateUnitPrice, getCustomerProfile } from './cart.js';
+import { formatPrice, getLang, t } from './i18n.js';
 
 export function getOrderEntryHref() {
-  return getCustomerProfile() ? '/menu.html' : '/delivery.html?next=menu';
-}
-
-function getBrandLogo() {
-  return '<img src="/images/brand-logo.png" alt="Amo Madbouly Pie & Pizza" />';
+  return getCustomerProfile() ? '/menu' : '/delivery?next=menu';
 }
 
 export function renderImageWithFallback(src, alt, className = '') {
@@ -49,11 +45,7 @@ export function showToast(message, showCartLink = true) {
   toast.className = 'toast';
   toast.innerHTML = `
     <span><i class="fa-solid fa-circle-check"></i> ${escapeHtml(message)}</span>
-    ${
-      showCartLink
-        ? `<a href="/cart.html" style="text-decoration: underline; color: var(--color-accent); white-space: nowrap;">${escapeHtml(t(UI_TEXT.common.viewCart, lang))}</a>`
-        : ''
-    }
+    ${showCartLink ? `<a href="/cart" style="text-decoration: underline; color: var(--color-accent); white-space: nowrap;">${escapeHtml(t(UI_TEXT.common.viewCart, lang))}</a>` : ''}
   `;
   container.appendChild(toast);
 
@@ -62,205 +54,6 @@ export function showToast(message, showCartLink = true) {
     toast.style.transform = 'translateY(8px)';
     setTimeout(() => toast.remove(), 220);
   }, 3000);
-}
-
-export function renderHeader(activePage = 'home') {
-  const headerEl = document.getElementById('site-header');
-  if (!headerEl) return;
-
-  const lang = getLang();
-  const count = getCartCount();
-  const navItems = [
-    { key: 'home', href: '/index.html', label: t(UI_TEXT.nav.home, lang) },
-    { key: 'menu', href: '/menu.html', label: t(UI_TEXT.nav.menu, lang) },
-    { key: 'track', href: '/track.html', label: t(UI_TEXT.nav.track, lang) },
-    { key: 'about', href: '/about.html', label: t(UI_TEXT.nav.about, lang) },
-    { key: 'contact', href: '/contact.html', label: t(UI_TEXT.nav.contact, lang) },
-  ];
-
-  headerEl.className = 'site-header';
-  headerEl.innerHTML = `
-    <div class="container site-header__inner">
-      <a href="/index.html" class="brand-link">
-        <span class="brand-mark">${getBrandLogo()}</span>
-        <span>${escapeHtml(t(BRAND_CONFIG.name, lang))}</span>
-      </a>
-
-      <nav class="nav-links" aria-label="Main Navigation">
-        ${navItems
-          .map(
-            (item) => `
-          <a href="${item.href}" class="nav-link ${activePage === item.key ? 'nav-link--active' : ''}">
-            ${escapeHtml(item.label)}
-          </a>
-        `
-          )
-          .join('')}
-      </nav>
-
-      <div class="header-actions">
-        <button type="button" class="lang-toggle" id="lang-toggle-btn" aria-label="Switch Language">
-          ${lang === 'ar' ? 'EN' : 'عربي'}
-        </button>
-
-        <a href="/account.html" class="cart-trigger ${activePage === 'account' ? 'is-active' : ''}" aria-label="${escapeHtml(t(UI_TEXT.account.navLabel, lang))}" title="${escapeHtml(t(UI_TEXT.account.navLabel, lang))}">
-          <i class="fa-regular fa-user"></i>
-        </a>
-
-        <a href="/cart.html" class="cart-trigger" aria-label="${escapeHtml(t(UI_TEXT.nav.cart, lang))}">
-          <i class="fa-solid fa-bag-shopping"></i>
-          <span class="cart-badge tabular-nums" id="header-cart-count">${count}</span>
-        </a>
-
-        <a href="${getOrderEntryHref()}" class="btn btn--primary btn--sm header-order-cta">
-          ${escapeHtml(t(UI_TEXT.nav.orderNow, lang))}
-        </a>
-
-        <button type="button" class="mobile-menu-btn" id="mobile-menu-open" aria-label="Open Menu" aria-controls="mobile-drawer" aria-expanded="false">
-          <i class="fa-solid fa-bars"></i>
-        </button>
-      </div>
-    </div>
-  `;
-
-  renderMobileDrawer(activePage, navItems, lang);
-
-  document.getElementById('lang-toggle-btn')?.addEventListener('click', () => {
-    toggleLang();
-  });
-}
-
-function renderMobileDrawer(activePage, navItems, lang) {
-  let drawer = document.getElementById('mobile-drawer');
-
-  if (!drawer) {
-    drawer = document.createElement('dialog');
-    drawer.id = 'mobile-drawer';
-    drawer.className = 'mobile-drawer';
-    drawer.setAttribute('aria-label', 'Mobile Navigation');
-    document.body.appendChild(drawer);
-
-    drawer.addEventListener('close', () => {
-      drawer.classList.remove('is-open');
-      document.getElementById('mobile-menu-open')?.setAttribute('aria-expanded', 'false');
-      document.getElementById('mobile-menu-open')?.focus();
-    });
-  }
-
-  drawer.innerHTML = `
-    <div class="mobile-drawer__head">
-      <span class="brand-link">${escapeHtml(t(BRAND_CONFIG.name, lang))}</span>
-      <button type="button" class="mobile-menu-btn" id="mobile-menu-close" aria-label="Close Menu">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <nav class="mobile-drawer__nav">
-      ${navItems
-        .map(
-          (item) => `
-        <a href="${item.href}" class="mobile-drawer__link ${activePage === item.key ? 'mobile-drawer__link--active' : ''}">
-          ${escapeHtml(item.label)}
-        </a>
-      `
-        )
-        .join('')}
-      <a href="/account.html" class="mobile-drawer__link ${activePage === 'account' ? 'mobile-drawer__link--active' : ''}">
-        ${escapeHtml(t(UI_TEXT.account.navLabel, lang))}
-      </a>
-      <a href="/delivery.html" class="mobile-drawer__link ${activePage === 'delivery' ? 'mobile-drawer__link--active' : ''}">
-        ${escapeHtml(t(UI_TEXT.delivery.navLabel, lang))}
-      </a>
-      <a href="/cart.html" class="mobile-drawer__link ${activePage === 'cart' ? 'mobile-drawer__link--active' : ''}">
-        ${escapeHtml(t(UI_TEXT.nav.cart, lang))}
-      </a>
-    </nav>
-    <a href="${getOrderEntryHref()}" class="btn btn--primary btn--full" style="margin-top: auto;">
-      ${escapeHtml(t(UI_TEXT.nav.orderNow, lang))}
-    </a>
-  `;
-
-  const openButton = document.getElementById('mobile-menu-open');
-  openButton?.addEventListener('click', () => {
-    if (drawer.open) return;
-    drawer.showModal();
-    openButton.setAttribute('aria-expanded', 'true');
-    requestAnimationFrame(() => drawer.classList.add('is-open'));
-    document.getElementById('mobile-menu-close')?.focus();
-  });
-
-  drawer.querySelector('#mobile-menu-close')?.addEventListener('click', () => {
-    if (drawer.open) drawer.close();
-  });
-  drawer.onclick = (event) => {
-    if (event.target === drawer) drawer.close();
-  };
-  drawer.querySelectorAll('.mobile-drawer__link').forEach((link) => {
-    link.addEventListener('click', () => {
-      if (drawer.open) drawer.close();
-    }, { once: true });
-  });
-}
-
-export function renderFooter() {
-  const footerEl = document.getElementById('site-footer');
-  if (!footerEl) return;
-
-  const lang = getLang();
-  footerEl.className = 'site-footer';
-  footerEl.innerHTML = `
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="footer-brand-lockup">
-            <img src="/images/brand-logo.png" alt="Amo Madbouly Pie & Pizza" />
-            <h2 class="footer-brand">${escapeHtml(t(BRAND_CONFIG.name, lang))}</h2>
-          </div>
-          <p class="footer-copy">${escapeHtml(t(BRAND_CONFIG.tagline, lang))}</p>
-          <div class="footer-socials">
-            <a href="https://www.facebook.com/share/1FhQyU6Afz/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="https://wa.me/${BRAND_CONFIG.whatsappNumber}" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="footer-heading">${escapeHtml(t(UI_TEXT.footer.quickLinks, lang))}</h3>
-          <ul class="footer-list">
-            <li><a href="/index.html">${escapeHtml(t(UI_TEXT.nav.home, lang))}</a></li>
-            <li><a href="/menu.html">${escapeHtml(t(UI_TEXT.nav.menu, lang))}</a></li>
-            <li><a href="/track.html">${escapeHtml(t(UI_TEXT.nav.track, lang))}</a></li>
-            <li><a href="/account.html">${escapeHtml(t(UI_TEXT.account.navLabel, lang))}</a></li>
-            <li><a href="/delivery.html">${escapeHtml(t(UI_TEXT.delivery.navLabel, lang))}</a></li>
-            <li><a href="/about.html">${escapeHtml(t(UI_TEXT.nav.about, lang))}</a></li>
-            <li><a href="/contact.html">${escapeHtml(t(UI_TEXT.nav.contact, lang))}</a></li>
-            <li><a href="/cart.html">${escapeHtml(t(UI_TEXT.nav.cart, lang))}</a></li>
-            <li><a href="/kitchen.html" target="_blank" rel="noopener noreferrer">${escapeHtml(t(UI_TEXT.kitchen.navLabel, lang))}</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 class="footer-heading">${escapeHtml(t(UI_TEXT.footer.contactInfo, lang))}</h3>
-          <ul class="footer-list">
-            <li><a href="${BRAND_CONFIG.phoneHref}" dir="ltr">${escapeHtml(BRAND_CONFIG.phone)}</a></li>
-            <li><a href="mailto:${BRAND_CONFIG.email}">${escapeHtml(BRAND_CONFIG.email)}</a></li>
-            <li>${escapeHtml(t(BRAND_CONFIG.address, lang))}</li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 class="footer-heading">${escapeHtml(t(UI_TEXT.footer.openingHours, lang))}</h3>
-          <ul class="footer-list">
-            <li>${escapeHtml(t(BRAND_CONFIG.hours, lang))}</li>
-            <li>${lang === 'ar' ? 'التوصيل متاح في مناطق الإسكندرية' : 'Delivery across Alexandria'}</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <span>© ${new Date().getFullYear()} ${escapeHtml(t(BRAND_CONFIG.name, lang))} · ${escapeHtml(t(UI_TEXT.footer.copyright, lang))}</span>
-        <a href="/menu.html" style="color: var(--color-accent); font-weight: 600;">${escapeHtml(t(UI_TEXT.nav.orderNow, lang))}</a>
-      </div>
-    </div>
-  `;
 }
 
 export function renderProductCard(product) {
@@ -274,7 +67,7 @@ export function renderProductCard(product) {
 
   return `
     <article class="product-card tilt-3d" data-product-id="${product.id}">
-      <a href="/product.html?id=${product.id}" aria-label="${escapeHtml(t(product.name, lang))}">
+      <a href="/product?id=${product.id}" aria-label="${escapeHtml(t(product.name, lang))}">
         ${renderImageWithFallback(product.image, t(product.name, lang))}
       </a>
       <div class="product-card__body">
@@ -282,7 +75,7 @@ export function renderProductCard(product) {
           <span>${escapeHtml(metaParts.join(' · '))}</span>
         </div>
         <h3 class="product-card__title">
-          <a href="/product.html?id=${product.id}">${escapeHtml(t(product.name, lang))}</a>
+          <a href="/product?id=${product.id}">${escapeHtml(t(product.name, lang))}</a>
         </h3>
         <p class="product-card__desc">${escapeHtml(t(product.description, lang))}</p>
         <div class="product-card__footer">
@@ -481,7 +274,7 @@ export function openProductModal(productId) {
           </button>
         </div>
 
-        <a href="/product.html?id=${product.id}" style="font-size: 0.85rem; color: var(--color-secondary); text-decoration: underline;">
+        <a href="/product?id=${product.id}" style="font-size: 0.85rem; color: var(--color-secondary); text-decoration: underline;">
           ${escapeHtml(t(UI_TEXT.common.viewDetails, lang))}
         </a>
       </div>
@@ -540,26 +333,3 @@ export function closeProductModal() {
   document.getElementById('product-modal-backdrop')?.classList.remove('is-open');
 }
 
-export function initAppShell(activePage, onLangRefresh) {
-  applyDocumentDirection();
-  renderHeader(activePage);
-  renderFooter();
-
-  window.addEventListener('cart:updated', (e) => {
-    const badge = document.getElementById('header-cart-count');
-    if (badge) {
-      badge.textContent = String(e.detail.count);
-      badge.classList.remove('is-bump');
-      void badge.offsetWidth;
-      badge.classList.add('is-bump');
-    }
-  });
-
-  window.addEventListener('lang:changed', () => {
-    renderHeader(activePage);
-    renderFooter();
-    if (typeof onLangRefresh === 'function') {
-      onLangRefresh();
-    }
-  });
-}

@@ -1,13 +1,16 @@
-import { UI_TEXT } from '../data.js';
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue';
+import { usePageLocale } from '../composables/usePageLocale.js';
+import { UI_TEXT } from '../js/data.js';
 import {
   getLastOrderReceipt,
   getOrderByNumber,
   getOrdersHistory,
   getOrderStageIndex,
   subscribeOrderUpdates,
-} from '../cart.js';
-import { formatPrice, getLang, t } from '../i18n.js';
-import { bind3DTilt, escapeHtml, initAppShell, showToast } from '../ui.js';
+} from '../js/cart.js';
+import { formatPrice, getLang, t } from '../js/i18n.js';
+import { bind3DTilt, escapeHtml, showToast } from '../js/ui.js';
 
 const STAGE_ICONS = [
   'fa-solid fa-check',
@@ -94,10 +97,10 @@ function renderTrackPage() {
               ${escapeHtml(t(UI_TEXT.track.emptyDesc, lang))}
             </p>
             <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-              <a href="/menu.html" class="btn btn--primary btn--lg">
+              <a href="/menu" class="btn btn--primary btn--lg">
                 ${escapeHtml(t(UI_TEXT.cart.browseMenu, lang))}
               </a>
-              <a href="/account.html" class="btn btn--outline btn--lg">
+              <a href="/account" class="btn btn--outline btn--lg">
                 ${escapeHtml(t(UI_TEXT.account.myOrdersTitle, lang))}
               </a>
             </div>
@@ -203,7 +206,7 @@ function renderTrackPage() {
               <span style="font-size: 0.88rem; color: var(--color-text-muted);">
                 ${escapeHtml(t(UI_TEXT.track.liveUpdateNote, lang))}
               </span>
-              <a href="/account.html" style="font-size: 0.88rem; font-weight: 700; color: var(--color-primary); text-decoration: underline;">
+              <a href="/account" style="font-size: 0.88rem; font-weight: 700; color: var(--color-primary); text-decoration: underline;">
                 ${escapeHtml(t(UI_TEXT.account.myOrdersTitle, lang))}
               </a>
             </div>
@@ -304,7 +307,29 @@ function syncOrderFromKitchen() {
   }
 }
 
-initAppShell('track', renderTrackPage);
-renderTrackPage();
-subscribeOrderUpdates(syncOrderFromKitchen);
-setInterval(syncOrderFromKitchen, 1200);
+function mountPage() {
+  selectedOrderNumber = new URLSearchParams(window.location.search).get('order') || '';
+  lastRenderedSignature = '';
+  renderTrackPage();
+  unsubscribeOrderUpdates = subscribeOrderUpdates(syncOrderFromKitchen);
+  syncTimer = setInterval(syncOrderFromKitchen, 1200);
+}
+
+let unsubscribeOrderUpdates = null;
+let syncTimer = null;
+
+function unmountPage() {
+  unsubscribeOrderUpdates?.();
+  unsubscribeOrderUpdates = null;
+  if (syncTimer) clearInterval(syncTimer);
+  syncTimer = null;
+}
+
+usePageLocale(renderTrackPage);
+onMounted(mountPage);
+onBeforeUnmount(unmountPage);
+</script>
+
+<template>
+  <main id="track-root"></main>
+</template>

@@ -1,4 +1,7 @@
-import { ADDONS, BRAND_CONFIG, DELIVERY_DISTRICTS, PRODUCTS, UI_TEXT } from '../data.js';
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue';
+import { usePageLocale } from '../composables/usePageLocale.js';
+import { ADDONS, BRAND_CONFIG, DELIVERY_DISTRICTS, PRODUCTS, UI_TEXT } from '../js/data.js';
 import {
   clearCart,
   getAccountData,
@@ -6,9 +9,9 @@ import {
   getCustomerProfile,
   saveCustomerProfile,
   saveOrderReceipt,
-} from '../cart.js';
-import { formatPrice, getLang, t } from '../i18n.js';
-import { escapeHtml, initAppShell } from '../ui.js';
+} from '../js/cart.js';
+import { formatPrice, getLang, t } from '../js/i18n.js';
+import { escapeHtml } from '../js/ui.js';
 
 const savedProfile = getCustomerProfile();
 let selectedDistrictId = savedProfile?.districtId || DELIVERY_DISTRICTS[0].id;
@@ -58,7 +61,7 @@ function renderCheckoutPage() {
             <div class="empty-state__icon"><i class="fa-solid fa-bag-shopping"></i></div>
             <h2>${escapeHtml(t(UI_TEXT.cart.emptyTitle, lang))}</h2>
             <p style="color: var(--color-text-muted); margin-bottom: 20px;">${escapeHtml(t(UI_TEXT.cart.emptyDesc, lang))}</p>
-            <a href="/menu.html" class="btn btn--primary btn--lg">${escapeHtml(t(UI_TEXT.cart.browseMenu, lang))}</a>
+            <a href="/menu" class="btn btn--primary btn--lg">${escapeHtml(t(UI_TEXT.cart.browseMenu, lang))}</a>
           </div>
         </div>
       </section>
@@ -84,7 +87,7 @@ function renderCheckoutPage() {
             <h2 class="section-title" style="font-size: 1.5rem; margin: 0;">
               ${escapeHtml(t(UI_TEXT.checkout.customerDetails, lang))}
             </h2>
-            <a href="/account.html" style="font-size: 0.86rem; font-weight: 600; color: var(--color-secondary); text-decoration: underline;">
+            <a href="/account" style="font-size: 0.86rem; font-weight: 600; color: var(--color-secondary); text-decoration: underline;">
               ${escapeHtml(t(UI_TEXT.checkout.editDetails, lang))}
             </a>
           </div>
@@ -356,9 +359,21 @@ function renderCheckoutPage() {
 
     saveOrderReceipt(receipt);
     clearCart();
-    window.location.href = `/track.html?confirmed=1&order=${encodeURIComponent(orderNumber)}`;
+    window.location.href = `/track?confirmed=1&order=${encodeURIComponent(orderNumber)}`;
   });
 }
 
-initAppShell('checkout', renderCheckoutPage);
-renderCheckoutPage();
+function mountPage() {
+  renderCheckoutPage();
+}
+
+function unmountPage() {}
+
+usePageLocale(renderCheckoutPage);
+onMounted(mountPage);
+onBeforeUnmount(unmountPage);
+</script>
+
+<template>
+  <main id="checkout-root"></main>
+</template>

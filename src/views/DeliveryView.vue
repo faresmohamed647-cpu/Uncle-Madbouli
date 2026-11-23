@@ -1,7 +1,10 @@
-import { DELIVERY_DISTRICTS, UI_TEXT } from '../data.js';
-import { getCustomerProfile, saveCustomerProfile } from '../cart.js';
-import { formatPrice, getLang, t } from '../i18n.js';
-import { bind3DTilt, escapeHtml, initAppShell } from '../ui.js';
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue';
+import { usePageLocale } from '../composables/usePageLocale.js';
+import { DELIVERY_DISTRICTS, UI_TEXT } from '../js/data.js';
+import { getCustomerProfile, saveCustomerProfile } from '../js/cart.js';
+import { formatPrice, getLang, t } from '../js/i18n.js';
+import { bind3DTilt, escapeHtml } from '../js/ui.js';
 
 function renderDeliveryPage() {
   const lang = getLang();
@@ -78,7 +81,7 @@ function renderDeliveryPage() {
             <button type="submit" class="btn btn--primary btn--lg" style="flex: 1 1 180px; white-space: normal; text-align: center;">
               ${escapeHtml(primaryCtaText)}
             </button>
-            <a href="/menu.html" class="btn btn--outline btn--lg" style="flex: 1 1 140px;">
+            <a href="/menu" class="btn btn--outline btn--lg" style="flex: 1 1 140px;">
               ${escapeHtml(t(UI_TEXT.delivery.skipToMenu, lang))}
             </a>
           </div>
@@ -149,9 +152,21 @@ function renderDeliveryPage() {
       notes,
     });
 
-    window.location.href = nextTarget === 'checkout' ? '/checkout.html' : '/menu.html';
+    window.location.href = nextTarget === 'checkout' ? '/checkout' : '/menu';
   });
 }
 
-initAppShell('delivery', renderDeliveryPage);
-renderDeliveryPage();
+function mountPage() {
+  renderDeliveryPage();
+}
+
+function unmountPage() {}
+
+usePageLocale(renderDeliveryPage);
+onMounted(mountPage);
+onBeforeUnmount(unmountPage);
+</script>
+
+<template>
+  <main id="delivery-root"></main>
+</template>

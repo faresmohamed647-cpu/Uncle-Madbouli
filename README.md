@@ -1,20 +1,57 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# عم مدبولي | فطير مصري أصيل
 
-# Run and deploy your AI Studio app
+موقع لعرض وطلب الفطير المصري والمخبوزات. يتيح للزائر تصفح الأصناف، اختيار المنتجات والإضافات، مراجعة سلة الطلب، وإدخال بيانات التوصيل. الواجهة متاحة بالعربية والإنجليزية.
 
-This contains everything you need to run your app locally.
+## تشغيل المشروع محلياً
 
-View your app in AI Studio: https://ai.studio/apps/21b46c01-f353-493b-97b0-2b15484ccef4
+تحتاج إلى تثبيت Node.js. افتح Terminal داخل مجلد المشروع ونفّذ:
 
-## Run Locally
+```sh
+npm install
+npm run dev
+```
 
-**Prerequisites:**  Node.js
+افتح الرابط الذي يظهر في الطرفية، وغالباً يكون:
 
+```text
+http://localhost:3000
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+لإيقاف خادم التطوير اضغط `Ctrl+C` في الطرفية.
+
+## تجهيز نسخة للنشر
+
+```sh
+npm run build
+npm run preview
+```
+
+ينشئ أمر البناء ملفات الموقع الجاهزة للنشر داخل مجلد `dist`، ويشغّل أمر المعاينة نسخة البناء محلياً.
+
+## صفحات الموقع
+
+- `/` الصفحة الرئيسية والتعريف بالمخبز.
+- `/menu` قائمة المنتجات وتصفيتها حسب النوع.
+- `/product?id=...` تفاصيل المنتج وخياراته.
+- `/cart` مراجعة المنتجات والكميات في السلة.
+- `/checkout` إتمام بيانات الطلب.
+- `/delivery` بيانات التوصيل.
+- `/account` الحساب والطلبات.
+- `/track` متابعة الطلب.
+- `/about` قصة المخبز.
+- `/contact` التواصل.
+- `/kitchen` متابعة الطلبات في المطبخ.
+
+## تنظيم الملفات
+
+- `src/main.js` نقطة تشغيل تطبيق Vue.
+- `src/App.vue` الهيكل العام للموقع.
+- `src/components/` مكونات الواجهة المشتركة.
+- `src/router/` تعريف الصفحات والتنقل بينها.
+- `src/stores/` حالة التطبيق المشتركة، مثل سلة الطلب.
+- `src/views/` مكونات صفحات الموقع.
+- `src/js/` بيانات المنتجات وأدوات الطلب واللغة.
+- `src/css/` التنسيقات والأنماط.
+- `src/assets/` الصور والملفات الثابتة.
+
+يستخدم المشروع Vue 3 وVue Router وPinia، ويستخدم Vite للتشغيل المحلي وبناء ملفات النشر.

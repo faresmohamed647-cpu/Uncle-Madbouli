@@ -1,14 +1,17 @@
-import { ADDONS, CATEGORIES, PRODUCTS, UI_TEXT } from '../data.js';
-import { addToCart, calculateUnitPrice } from '../cart.js';
-import { formatPrice, getLang, t } from '../i18n.js';
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue';
+import { usePageLocale } from '../composables/usePageLocale.js';
+import { ADDONS, CATEGORIES, PRODUCTS, UI_TEXT } from '../js/data.js';
+import { addToCart, calculateUnitPrice } from '../js/cart.js';
+import { formatPrice, getLang, t } from '../js/i18n.js';
 import {
   bindProductCardActions,
   escapeHtml,
-  initAppShell,
+  
   renderImageWithFallback,
   renderProductCard,
   showToast,
-} from '../ui.js';
+} from '../js/ui.js';
 
 function renderProductDetailsPage() {
   const lang = getLang();
@@ -43,9 +46,9 @@ function renderProductDetailsPage() {
     <section class="section" style="padding-top: 28px;">
       <div class="container">
         <nav aria-label="Breadcrumb" style="margin-bottom: 20px; font-size: 0.9rem; color: var(--color-text-muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px;">
-          <a href="/index.html">${escapeHtml(t(UI_TEXT.nav.home, lang))}</a>
+          <a href="/">${escapeHtml(t(UI_TEXT.nav.home, lang))}</a>
           <span style="margin-inline: 8px;">/</span>
-          <a href="/menu.html?category=${product.category}">${escapeHtml(t(category?.name, lang))}</a>
+          <a href="/menu?category=${product.category}">${escapeHtml(t(category?.name, lang))}</a>
           <span style="margin-inline: 8px;">/</span>
           <strong style="color: var(--color-primary);">${escapeHtml(t(product.name, lang))}</strong>
         </nav>
@@ -139,7 +142,7 @@ function renderProductDetailsPage() {
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">${escapeHtml(t(UI_TEXT.product.relatedTitle, lang))}</h2>
-          <a href="/menu.html" class="btn btn--outline">${escapeHtml(t(UI_TEXT.sections.viewFullMenu, lang))}</a>
+          <a href="/menu" class="btn btn--outline">${escapeHtml(t(UI_TEXT.sections.viewFullMenu, lang))}</a>
         </div>
         <div class="products-grid">
           ${related.map((item) => renderProductCard(item)).join('')}
@@ -200,5 +203,17 @@ function renderProductDetailsPage() {
   bindProductCardActions(root);
 }
 
-initAppShell('menu', renderProductDetailsPage);
-renderProductDetailsPage();
+function mountPage() {
+  renderProductDetailsPage();
+}
+
+function unmountPage() {}
+
+usePageLocale(renderProductDetailsPage);
+onMounted(mountPage);
+onBeforeUnmount(unmountPage);
+</script>
+
+<template>
+  <main id="product-root"></main>
+</template>

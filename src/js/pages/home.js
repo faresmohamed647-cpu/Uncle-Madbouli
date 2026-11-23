@@ -5,9 +5,9 @@ import {
   SPECIAL_OFFERS,
   UI_TEXT,
   WHY_CHOOSE_US,
-} from '../data.js';
-import { addToCart } from '../cart.js';
-import { formatPrice, getLang, t } from '../i18n.js';
+} from "../data.js";
+import { addToCart } from "../cart.js";
+import { formatPrice, getLang, t } from "../i18n.js";
 import {
   bind3DTilt,
   bindProductCardActions,
@@ -17,11 +17,11 @@ import {
   renderImageWithFallback,
   renderProductCard,
   showToast,
-} from '../ui.js';
+} from "../ui.js";
 
 function renderHome() {
   const lang = getLang();
-  const root = document.getElementById('home-root');
+  const root = document.getElementById("home-root");
   if (!root) return;
 
   const bestSellers = PRODUCTS.filter((p) => p.isBestSeller).slice(0, 6);
@@ -46,9 +46,9 @@ function renderHome() {
                 <span class="hero-stat__val tabular-nums">${escapeHtml(t(stat.val, lang))}</span>
                 <span class="hero-stat__label">${escapeHtml(t(stat.label, lang))}</span>
               </div>
-            `
+            `,
               )
-              .join('')}
+              .join("")}
           </div>
         </div>
         <div class="hero-media tilt-3d">
@@ -58,8 +58,8 @@ function renderHome() {
             referrerpolicy="no-referrer"
           />
           <div class="hero-3d-badge" aria-hidden="true">
-            <span class="hero-3d-badge__title">${lang === 'ar' ? 'سمن بلدي ١٠٠٪' : '100% Baladi Ghee'}</span>
-            <span class="hero-3d-badge__sub">${lang === 'ar' ? 'يُفرد ويُخبز طازجاً' : 'Hand-stretched fresh'}</span>
+            <span class="hero-3d-badge__title">${lang === "ar" ? "سمن بلدي ١٠٠٪" : "100% Baladi Ghee"}</span>
+            <span class="hero-3d-badge__sub">${lang === "ar" ? "يُفرد ويُخبز طازجاً" : "Hand-stretched fresh"}</span>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@ function renderHome() {
                 <span class="category-card__count tabular-nums">${count} ${escapeHtml(t(UI_TEXT.common.itemsCount, lang))}</span>
               </a>
             `;
-          }).join('')}
+          }).join("")}
         </div>
       </div>
     </section>
@@ -104,7 +104,7 @@ function renderHome() {
           </a>
         </div>
         <div class="products-grid" id="best-sellers-grid">
-          ${bestSellers.map((p) => renderProductCard(p)).join('')}
+          ${bestSellers.map((p) => renderProductCard(p)).join("")}
         </div>
       </div>
     </section>
@@ -148,8 +148,8 @@ function renderHome() {
                 </div>
               </div>
             </article>
-          `
-          ).join('')}
+          `,
+          ).join("")}
         </div>
       </div>
     </section>
@@ -173,8 +173,8 @@ function renderHome() {
               <h3 class="pillar-card__title">${escapeHtml(t(pillar.title, lang))}</h3>
               <p class="pillar-card__desc">${escapeHtml(t(pillar.desc, lang))}</p>
             </article>
-          `
-          ).join('')}
+          `,
+          ).join("")}
         </div>
       </div>
     </section>
@@ -207,8 +207,8 @@ function renderHome() {
                 <span class="review-author__meta">${escapeHtml(t(rev.area, lang))}</span>
               </div>
             </article>
-          `
-          ).join('')}
+          `,
+          ).join("")}
         </div>
       </div>
     </section>
@@ -217,11 +217,11 @@ function renderHome() {
   bindProductCardActions(root);
   bind3DTilt(root);
 
-  root.querySelectorAll('.js-add-offer').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const productId = btn.getAttribute('data-product-id');
-      const sizeId = btn.getAttribute('data-size-id');
-      const offerTitle = btn.getAttribute('data-offer-title');
+  root.querySelectorAll(".js-add-offer").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const productId = btn.getAttribute("data-product-id");
+      const sizeId = btn.getAttribute("data-size-id");
+      const offerTitle = btn.getAttribute("data-offer-title");
       addToCart({
         productId,
         sizeId,
@@ -233,5 +233,7 @@ function renderHome() {
   });
 }
 
-initAppShell('home', renderHome);
-renderHome();
+export function mountLegacyPage() {
+  initAppShell("home", renderHome);
+  renderHome();
+}

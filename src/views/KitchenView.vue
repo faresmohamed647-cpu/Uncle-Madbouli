@@ -1,13 +1,16 @@
-import { UI_TEXT } from '../data.js';
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue';
+import { usePageLocale } from '../composables/usePageLocale.js';
+import { UI_TEXT } from '../js/data.js';
 import {
   createDemoOrderReceipt,
   getOrdersHistory,
   getOrderStageIndex,
   subscribeOrderUpdates,
   updateOrderByNumber,
-} from '../cart.js';
-import { formatPrice, getLang, t } from '../i18n.js';
-import { escapeHtml, initAppShell, showToast } from '../ui.js';
+} from '../js/cart.js';
+import { formatPrice, getLang, t } from '../js/i18n.js';
+import { escapeHtml, showToast } from '../js/ui.js';
 
 const STAGE_PROGRESS_VALUES = [15, 45, 78, 100];
 let autoTimer = null;
@@ -65,7 +68,7 @@ function renderKitchenPage() {
               <i class="fa-solid fa-plus"></i>
               <span>${escapeHtml(t(UI_TEXT.kitchen.createDemoBtn, lang))}</span>
             </button>
-            <a href="/track.html" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--sm">
+            <a href="/track" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--sm">
               <i class="fa-solid fa-up-right-from-square"></i>
               <span>${escapeHtml(t(UI_TEXT.kitchen.openCustomerTrack, lang))}</span>
             </a>
@@ -118,7 +121,7 @@ function renderKitchenPage() {
                       </div>
                       <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                         <span class="track-progress-percent tabular-nums" style="font-size: 1.5rem;">${progress}%</span>
-                        <a href="/track.html?order=${encodeURIComponent(order.orderNumber)}" target="_blank" rel="noopener noreferrer" class="btn btn--outline btn--sm">
+                        <a href="/track?order=${encodeURIComponent(order.orderNumber)}" target="_blank" rel="noopener noreferrer" class="btn btn--outline btn--sm">
                           ${escapeHtml(t(UI_TEXT.kitchen.openCustomerTrack, lang))}
                         </a>
                       </div>
@@ -232,8 +235,24 @@ function renderKitchenPage() {
   startAutoTimerIfNeeded();
 }
 
-initAppShell('kitchen', renderKitchenPage);
-renderKitchenPage();
-subscribeOrderUpdates(() => {
+function mountPage() {
   renderKitchenPage();
-});
+  unsubscribeOrderUpdates = subscribeOrderUpdates(() => renderKitchenPage());
+}
+
+let unsubscribeOrderUpdates = null;
+
+function unmountPage() {
+  stopAutoTimer();
+  unsubscribeOrderUpdates?.();
+  unsubscribeOrderUpdates = null;
+}
+
+usePageLocale(renderKitchenPage);
+onMounted(mountPage);
+onBeforeUnmount(unmountPage);
+</script>
+
+<template>
+  <main id="kitchen-root"></main>
+</template>

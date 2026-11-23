@@ -1,6 +1,9 @@
-import { BRAND_CONFIG, CATEGORIES, PRODUCTS, UI_TEXT } from '../data.js';
-import { getLang, t } from '../i18n.js';
-import { bindProductCardActions, escapeHtml, initAppShell, renderProductCard } from '../ui.js';
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue';
+import { usePageLocale } from '../composables/usePageLocale.js';
+import { BRAND_CONFIG, CATEGORIES, PRODUCTS, UI_TEXT } from '../js/data.js';
+import { getLang, t } from '../js/i18n.js';
+import { bindProductCardActions, escapeHtml, renderProductCard } from '../js/ui.js';
 
 const params = new URLSearchParams(window.location.search);
 let activeCategory = params.get('category') || 'all';
@@ -134,5 +137,17 @@ function renderFilteredProducts() {
   bindProductCardActions(gridContainer);
 }
 
-initAppShell('menu', renderMenuPage);
-renderMenuPage();
+function mountPage() {
+  renderMenuPage();
+}
+
+function unmountPage() {}
+
+usePageLocale(renderMenuPage);
+onMounted(mountPage);
+onBeforeUnmount(unmountPage);
+</script>
+
+<template>
+  <main id="menu-root"></main>
+</template>

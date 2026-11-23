@@ -1,6 +1,9 @@
-import { BRAND_CONFIG } from '../data.js';
-import { getLang, t } from '../i18n.js';
-import { escapeHtml, initAppShell } from '../ui.js';
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue';
+import { usePageLocale } from '../composables/usePageLocale.js';
+import { BRAND_CONFIG } from '../js/data.js';
+import { getLang, t } from '../js/i18n.js';
+import { escapeHtml } from '../js/ui.js';
 
 function renderContactPage() {
   const lang = getLang();
@@ -143,5 +146,17 @@ function renderContactPage() {
   });
 }
 
-initAppShell('contact', renderContactPage);
-renderContactPage();
+function mountPage() {
+  renderContactPage();
+}
+
+function unmountPage() {}
+
+usePageLocale(renderContactPage);
+onMounted(mountPage);
+onBeforeUnmount(unmountPage);
+</script>
+
+<template>
+  <main id="contact-root"></main>
+</template>
