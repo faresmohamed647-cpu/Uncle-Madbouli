@@ -116,7 +116,7 @@ export function renderHeader(activePage = 'home') {
           ${escapeHtml(t(UI_TEXT.nav.orderNow, lang))}
         </a>
 
-        <button type="button" class="mobile-menu-btn" id="mobile-menu-open" aria-label="Open Menu">
+        <button type="button" class="mobile-menu-btn" id="mobile-menu-open" aria-label="Open Menu" aria-controls="mobile-drawer" aria-expanded="false">
           <i class="fa-solid fa-bars"></i>
         </button>
       </div>
@@ -128,30 +128,23 @@ export function renderHeader(activePage = 'home') {
   document.getElementById('lang-toggle-btn')?.addEventListener('click', () => {
     toggleLang();
   });
-
-  document.getElementById('mobile-menu-open')?.addEventListener('click', () => {
-    document.getElementById('mobile-drawer')?.classList.add('is-open');
-    document.getElementById('mobile-drawer-backdrop')?.classList.add('is-open');
-  });
 }
 
 function renderMobileDrawer(activePage, navItems, lang) {
-  let backdrop = document.getElementById('mobile-drawer-backdrop');
   let drawer = document.getElementById('mobile-drawer');
 
-  if (!backdrop) {
-    backdrop = document.createElement('div');
-    backdrop.id = 'mobile-drawer-backdrop';
-    backdrop.className = 'mobile-drawer-backdrop';
-    document.body.appendChild(backdrop);
-  }
-
   if (!drawer) {
-    drawer = document.createElement('aside');
+    drawer = document.createElement('dialog');
     drawer.id = 'mobile-drawer';
     drawer.className = 'mobile-drawer';
     drawer.setAttribute('aria-label', 'Mobile Navigation');
     document.body.appendChild(drawer);
+
+    drawer.addEventListener('close', () => {
+      drawer.classList.remove('is-open');
+      document.getElementById('mobile-menu-open')?.setAttribute('aria-expanded', 'false');
+      document.getElementById('mobile-menu-open')?.focus();
+    });
   }
 
   drawer.innerHTML = `
@@ -186,13 +179,26 @@ function renderMobileDrawer(activePage, navItems, lang) {
     </a>
   `;
 
-  const closeDrawer = () => {
-    drawer.classList.remove('is-open');
-    backdrop.classList.remove('is-open');
-  };
+  const openButton = document.getElementById('mobile-menu-open');
+  openButton?.addEventListener('click', () => {
+    if (drawer.open) return;
+    drawer.showModal();
+    openButton.setAttribute('aria-expanded', 'true');
+    requestAnimationFrame(() => drawer.classList.add('is-open'));
+    document.getElementById('mobile-menu-close')?.focus();
+  });
 
-  backdrop.onclick = closeDrawer;
-  document.getElementById('mobile-menu-close')?.addEventListener('click', closeDrawer);
+  drawer.querySelector('#mobile-menu-close')?.addEventListener('click', () => {
+    if (drawer.open) drawer.close();
+  });
+  drawer.onclick = (event) => {
+    if (event.target === drawer) drawer.close();
+  };
+  drawer.querySelectorAll('.mobile-drawer__link').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (drawer.open) drawer.close();
+    }, { once: true });
+  });
 }
 
 export function renderFooter() {

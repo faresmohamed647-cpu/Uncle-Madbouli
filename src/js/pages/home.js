@@ -131,7 +131,7 @@ function renderHome() {
                   <h3 class="offer-card__title">${escapeHtml(t(offer.title, lang))}</h3>
                   <p class="product-card__desc">${escapeHtml(t(offer.description, lang))}</p>
                 </div>
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                <div class="offer-card__footer">
                   <div class="offer-card__pricing tabular-nums">
                     <span class="offer-card__new">${escapeHtml(formatPrice(offer.offerPrice, lang))}</span>
                     <span class="offer-card__old">${escapeHtml(formatPrice(offer.originalPrice, lang))}</span>
